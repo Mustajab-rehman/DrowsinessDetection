@@ -5,6 +5,7 @@ import morgan from "morgan";
 import { mongoose } from "./datasources";
 import { authMiddleware, corsMiddleware } from "./middlewares";
 import { router } from "./routes/index.route";
+import { createHash } from "crypto";
 
 // Configure dotenv to use .env file like .env.dev or .env.prod
 dotenv.config({
@@ -25,6 +26,30 @@ app.use(
   authMiddleware,
   helmet()
 );
+
+app.get("/verification-token", (req, res) => {
+  const challengeCode = req.query.challenge_code as string;
+  const verificationToken = "EeNv89Ubsq8912NX6vJ5VP78D9cyeUlf";
+  const endPoint = "https://gg75s5cc-5000.inc1.devtunnels.ms/verification-token";
+
+  const hash = createHash("sha256");
+  hash.update(challengeCode);
+  hash.update(verificationToken);
+  hash.update(endPoint);
+  const responseHash = hash.digest("hex");
+  const response = Buffer.from(responseHash).toString();
+
+  return res.json({
+    challengeResponse: response,
+  });
+});
+
+app.post("/verification-token", (req, res) => {
+  console.log(req.body);
+  res.json({
+    success: true,
+  });
+});
 
 app.use("/api", router);
 
