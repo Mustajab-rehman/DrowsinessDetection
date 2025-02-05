@@ -3,7 +3,7 @@ import { Router } from "express";
 // Routes
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 
-import { me } from "./me.route";
+import { inventory } from "./inventory.route";
 
 // Create a new router to handle all routes
 const router: Router = Router();
@@ -12,7 +12,7 @@ const router: Router = Router();
 const routes: {
   [key: string]: (router: Router) => void;
 } = {
-  me,
+  inventory,
 };
 
 // Loop through all routes and pass the router to each route
