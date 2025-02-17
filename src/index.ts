@@ -6,6 +6,7 @@ import { mongoose } from "./datasources";
 import { authMiddleware, corsMiddleware } from "./middlewares";
 import { router } from "./routes/index.route";
 import { createHash } from "crypto";
+import fs from "fs";
 
 // Configure dotenv to use .env file like .env.dev or .env.prod
 dotenv.config({
@@ -16,6 +17,11 @@ const app: Express = express();
 
 // Connect to MongoDB
 mongoose.run();
+
+// Check for ebay_tokens.json file
+if (!fs.existsSync("ebay_tokens.json")) {
+  fs.writeFileSync("ebay_tokens.json", JSON.stringify({ generated_at: Date.now() }, null, 2));
+}
 
 app.use(
   express.json({ limit: "10mb" }),

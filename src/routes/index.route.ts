@@ -4,6 +4,8 @@ import { Router } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 
 import { inventory } from "./inventory.route";
+import { amazon } from "./amazon.route";
+import { ebay } from "./ebay.route";
 
 // Create a new router to handle all routes
 const router: Router = Router();
@@ -13,6 +15,8 @@ const routes: {
   [key: string]: (router: Router) => void;
 } = {
   inventory,
+  amazon,
+  ebay,
 };
 
 // Loop through all routes and pass the router to each route

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
+    "resolveJsonModule": true,
     "module": "CommonJS",
     "baseUrl": ".",
     "paths": {
@@ -15,7 +16,7 @@
     "noPropertyAccessFromIndexSignature": false,
     "skipLibCheck": true
   },
-  
+
   "extends": [],
   "exclude": ["node_modules"],
   "include": ["src/**/*.ts"]
