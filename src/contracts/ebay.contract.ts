@@ -93,3 +93,84 @@ export type EbayControllerCreateCustomPolicyRequest = {
   label: string;
   policyType: string;
 };
+
+export type EbayControllerCreatePolicyRequest = {
+  name: string;
+  label: string;
+  description: string;
+  policyType: string;
+};
+
+export type EbayControllerCreateFulfillmentPolicyRequest = {
+  categoryTypeName: string;
+  marketplaceId: string;
+  name: string;
+  globalShipping: boolean;
+  handlingTime: {
+    value: number;
+    unit: string;
+  };
+  shippingOptions: {
+    shippingCostType: string;
+    shippingServiceType: string;
+    shippingCost: {
+      value: number;
+      currency: string;
+    };
+    buyerResponsibleForShipping: boolean;
+    freeShipping: boolean;
+    shippingCarrierCode: string;
+    shippingServiceCode: string;
+  }[];
+};
+
+export type EbayDayOfWeekEnum = "SUNDAY" | "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY";
+
+export type EbayControllerCreateLocationRequest = {
+  address: {
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    country: string;
+    postalCode: string;
+    stateOrProvince: string;
+  };
+  geoCoordinates: {
+    latitude: number;
+    longitude: number;
+  };
+  phone: string;
+  locationTypes: string[];
+  operatingHours: {
+    dayOfWeek: EbayDayOfWeekEnum;
+    intervals: {
+      close: string;
+      open: string;
+    }[];
+  }[];
+  sameDayShippingCutOffTimes: {
+    weeklySchedule: {
+      day: EbayDayOfWeekEnum[];
+      cutOffTime: string;
+    }[];
+  };
+};
+
+export type EbayControllerCreatePaymentPolicyRequest = {
+  name: string;
+  marketplaceId: string;
+  categoryTypes: string[];
+  paymentMethods: string[];
+};
+
+export type EbayControllerCreateReturnPolicyRequest = {
+  name: string;
+  marketplaceId: string;
+  refundMethod: string;
+  returnsAccepted: boolean;
+  returnShippingCostPayer: string;
+  returnPeriod: {
+    value: number;
+    unit: string;
+  };
+};

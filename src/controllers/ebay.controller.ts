@@ -1,6 +1,11 @@
 import {
+  EbayControllerCreateFulfillmentPolicyRequest,
+  EbayControllerCreateLocationRequest,
   EbayControllerCreateOfferRequest,
+  EbayControllerCreatePaymentPolicyRequest,
+  EbayControllerCreatePolicyRequest,
   EbayControllerCreateProductRequest,
+  EbayControllerCreateReturnPolicyRequest,
   EbayControllerUpdateOfferRequest,
 } from "@/contracts/ebay.contract";
 import { IBodyRequest, ICombinedRequest, IParamsRequest } from "@/contracts/request.contract";
@@ -701,7 +706,7 @@ export const ebayController = {
     }
   },
 
-  createCustomPolicy: async (req: Request, res: Response) => {
+  createCustomPolicy: async (req: IBodyRequest<EbayControllerCreatePolicyRequest>, res: Response) => {
     try {
       const accessToken = await getStoredEbayAccessToken();
 
@@ -827,11 +832,36 @@ export const ebayController = {
     }
   },
 
-  createFulfillmentPolicy: async (req: Request, res: Response) => {
+  createFulfillmentPolicy: async (req: IBodyRequest<EbayControllerCreateFulfillmentPolicyRequest>, res: Response) => {
     try {
       const accessToken = await getStoredEbayAccessToken();
 
       const body = req.body;
+
+      const requestBody = {
+        categoryTypes: [
+          {
+            name: body.categoryTypeName,
+          },
+        ],
+        marketplaceId: body.marketplaceId,
+        name: body.name,
+        globalShipping: body.globalShipping,
+        handlingTime: body.handlingTime,
+        shippingOptions: body.shippingOptions.map((option) => ({
+          costType: option.shippingCostType,
+          optionType: option.shippingServiceType,
+          shippingServices: [
+            {
+              buyerResponsibleForShipping: option.buyerResponsibleForShipping,
+              freeShipping: option.freeShipping,
+              shippingCarrierCode: option.shippingCarrierCode,
+              shippingServiceCode: option.shippingServiceCode,
+              shippingCost: option.shippingCost,
+            },
+          ],
+        })),
+      };
 
       // Example API call to eBay Inventory API
       const response = await fetch(`${baseURL}/sell/account/v1/fulfillment_policy`, {
@@ -843,7 +873,7 @@ export const ebayController = {
           "Content-Language": "en-US",
           "Accept-Language": "en-US",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -951,12 +981,34 @@ export const ebayController = {
     }
   },
 
-  createInventoryLocation: async (req: Request, res: Response) => {
+  createInventoryLocation: async (
+    req: ICombinedRequest<
+      unknown,
+      EbayControllerCreateLocationRequest,
+      {
+        merchantLocationKey: string;
+      }
+    >,
+    res: Response
+  ) => {
     try {
       const accessToken = await getStoredEbayAccessToken();
 
       const body = req.body;
       const merchantLocationKey = req.params.merchantLocationKey;
+
+      const requestBody = {
+        location: {
+          address: body.address,
+          geoCoordinates: body.geoCoordinates,
+        },
+        phone: body.phone,
+        locationTypes: body.locationTypes,
+        operatingHours: body.operatingHours,
+        fulfillmentCenterSpecifications: {
+          sameDayShippingCutOffTimes: body.sameDayShippingCutOffTimes,
+        },
+      };
 
       // Example API call to eBay Inventory API
       const response = await fetch(`${baseURL}/sell/inventory/v1/location/${merchantLocationKey}`, {
@@ -968,7 +1020,7 @@ export const ebayController = {
           "Content-Language": "en-US",
           "Accept-Language": "en-US",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
@@ -1038,11 +1090,22 @@ export const ebayController = {
       });
     }
   },
-  createPaymentPolicy: async (req: Request, res: Response) => {
+  createPaymentPolicy: async (req: IBodyRequest<EbayControllerCreatePaymentPolicyRequest>, res: Response) => {
     try {
       const accessToken = await getStoredEbayAccessToken();
 
       const body = req.body;
+
+      const requestBody = {
+        name: body.name,
+        marketplaceId: body.marketplaceId,
+        categoryTypes: body.categoryTypes.map((type) => ({
+          name: type,
+        })),
+        paymentMethods: body.paymentMethods.map((method) => ({
+          paymentMethodType: method,
+        })),
+      };
 
       // Example API call to eBay Inventory API
       const response = await fetch(`${baseURL}/sell/account/v1/payment_policy`, {
@@ -1054,7 +1117,7 @@ export const ebayController = {
           "Content-Language": "en-US",
           "Accept-Language": "en-US",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
@@ -1125,7 +1188,7 @@ export const ebayController = {
     }
   },
 
-  createReturnPolicy: async (req: Request, res: Response) => {
+  createReturnPolicy: async (req: IBodyRequest<EbayControllerCreateReturnPolicyRequest>, res: Response) => {
     try {
       const accessToken = await getStoredEbayAccessToken();
 
