@@ -8,7 +8,7 @@ export const ebay = (router: Router) => {
   router.get("/auth/ebay/callback", ebayController.handleAuthorizationCallback);
   router.get("/auth/ebay/callback/declined", ebayController.handleFallbackCallback);
   router.get("/auth/refresh-token", ebayController.handleRefreshToken);
-  router.get("/auth/auth-file", ebayController.handleRefreshToken);
+  router.get("/auth/auth-file", ebayController.getAuthFile);
 
   router.get("/inventory", ebayController.getAllInventory);
   router.get("/inventory/get-all-categories", ebayController.getAllCategories);
