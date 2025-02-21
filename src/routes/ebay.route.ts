@@ -1,15 +1,6 @@
 import { ebayController } from "@/controllers/ebay.controller";
-import {
-  exchangeCodeForAccessToken,
-  getEbayAuthURL,
-  getNormalAccessToken,
-  getStoredEbayAccessToken,
-  refreshEbayAccessToken,
-} from "@/utils/ebay-helpers.util";
-import e, { Router } from "express";
+import { Router } from "express";
 // import ebayToken from "../../ebay_tokens.json";
-
-const baseURL = "https://api.ebay.com";
 
 export const ebay = (router: Router) => {
   router.get("/auth/initial", ebayController.getApplicationAuthToken);
@@ -17,6 +8,7 @@ export const ebay = (router: Router) => {
   router.get("/auth/ebay/callback", ebayController.handleAuthorizationCallback);
   router.get("/auth/ebay/callback/declined", ebayController.handleFallbackCallback);
   router.get("/auth/refresh-token", ebayController.handleRefreshToken);
+  router.get("/auth/auth-file", ebayController.handleRefreshToken);
 
   router.get("/inventory", ebayController.getAllInventory);
   router.get("/inventory/get-all-categories", ebayController.getAllCategories);

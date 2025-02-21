@@ -179,3 +179,8 @@ export const exchangeCodeForAccessToken = async (code: string) => {
   fs.writeFileSync("ebay_tokens.json", JSON.stringify({ ...parsedToken, generated_at: Date.now() }, null, 2));
   return parsedToken;
 };
+
+export const getCredentials = () => {
+  const credentials = fs.readFileSync("ebay_tokens.json", "utf-8");
+  return JSON.parse(credentials);
+};

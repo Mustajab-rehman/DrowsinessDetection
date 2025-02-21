@@ -11,6 +11,7 @@ import {
 import { IBodyRequest, ICombinedRequest, IParamsRequest } from "@/contracts/request.contract";
 import {
   exchangeCodeForAccessToken,
+  getCredentials,
   getEbayAuthURL,
   getNormalAccessToken,
   getStoredEbayAccessToken,
@@ -101,6 +102,25 @@ export const ebayController = {
   handleRefreshToken: async (req: Request, res: Response) => {
     try {
       const credentials = await refreshEbayAccessToken();
+      return res.status(StatusCodes.OK).json({
+        status: StatusCodes.OK,
+        message: ReasonPhrases.OK,
+        credentials,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+        message: ReasonPhrases.INTERNAL_SERVER_ERROR,
+        error: "Failed to get application token",
+        details: error,
+      });
+    }
+  },
+
+  getAuthFile: async (req: Request, res: Response) => {
+    try {
+      const credentials = await getCredentials();
       return res.status(StatusCodes.OK).json({
         status: StatusCodes.OK,
         message: ReasonPhrases.OK,
