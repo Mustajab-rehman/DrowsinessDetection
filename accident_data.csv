@@ -1,0 +1,11 @@
+weather,road_condition,traffic,time_of_day,accident
+Clear,Dry,Low,Morning,No
+Rain,Wet,High,Night,Yes
+Fog,Wet,Medium,Evening,Yes
+Clear,Dry,Medium,Afternoon,No
+Rain,Wet,High,Morning,Yes
+Clear,Dry,Low,Night,No
+Fog,Wet,High,Night,Yes
+Rain,Wet,Medium,Afternoon,Yes
+Clear,Dry,Medium,Morning,No
+Rain,Wet,Low,Evening,No
