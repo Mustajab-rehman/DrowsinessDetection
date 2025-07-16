@@ -12,7 +12,8 @@ Simple code in python to detect Drowsiness and Yawn and alert the user using Dli
 6. numpy
 7. argparse
 
-
+ 
+ 
 
 
 # MOCK DEPLOYMENT
