@@ -73,6 +73,8 @@ alarm_status2 = False
 saying = False
 COUNTER = 0
 
+
+
 print("-> Loading the predictor and detector...")
 detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")  # Faster but less accurate
 
