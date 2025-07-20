@@ -83,13 +83,23 @@ def lip_distance(shape):
         return 0.0
 
 def draw_landmarks(frame, shape, ear, yawn_distance, status):
-    """Draw landmarks and info on frame"""
+    """Draw landmarks and info on frame with enhanced visuals"""
     try:
-        # Draw facial landmarks
-        for (x, y) in shape:
-            cv2.circle(frame, (x, y), 1, (0, 255, 0), -1)
+        # Enhanced landmark drawing
+        for i, (x, y) in enumerate(shape):
+            # Different colors for different landmark groups
+            if 36 <= i <= 47:  # Eyes
+                color = (0, 255, 255)  # Yellow for eyes
+                radius = 2
+            elif 48 <= i <= 67:  # Mouth
+                color = (0, 0, 255)  # Red for mouth
+                radius = 2
+            else:  # Face outline
+                color = (0, 255, 0)  # Green for face outline
+                radius = 1
+            cv2.circle(frame, (x, y), radius, color, -1)
 
-        # Draw eye contours
+        # Draw eye contours with enhanced visibility
         (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
         (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
 
@@ -98,23 +108,46 @@ def draw_landmarks(frame, shape, ear, yawn_distance, status):
 
         leftEyeHull = cv2.convexHull(leftEye)
         rightEyeHull = cv2.convexHull(rightEye)
-        cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 0), 2)
-        cv2.drawContours(frame, [rightEyeHull], -1, (0, 255, 0), 2)
+        cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 255), 3)  # Thicker yellow contour
+        cv2.drawContours(frame, [rightEyeHull], -1, (0, 255, 255), 3)
 
-        # Draw mouth contour
+        # Draw mouth contour with enhanced visibility
         mouth = shape[48:60]
-        cv2.drawContours(frame, [mouth], -1, (0, 255, 0), 2)
+        cv2.drawContours(frame, [mouth], -1, (0, 0, 255), 3)  # Thicker red contour
 
-        # Add text information
-        cv2.putText(frame, f"EAR: {ear:.3f}", (10, 30),
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-        cv2.putText(frame, f"YAWN: {yawn_distance:.2f}", (10, 60),
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        # Enhanced text with background for better readability
+        def put_text_with_background(img, text, pos, font_scale=0.7, color=(255, 255, 255), thickness=2):
+            # Get text size
+            (text_width, text_height), baseline = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, font_scale, thickness)
+            # Draw background rectangle
+            cv2.rectangle(img, (pos[0] - 5, pos[1] - text_height - 5), 
+                         (pos[0] + text_width + 5, pos[1] + baseline + 5), (0, 0, 0), -1)
+            # Draw text
+            cv2.putText(img, text, pos, cv2.FONT_HERSHEY_SIMPLEX, font_scale, color, thickness)
 
-        # Status text
-        color = (0, 0, 255) if status in ['Drowsiness detected', 'Yawning detected'] else (0, 255, 0)
-        cv2.putText(frame, status, (10, 90),
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
+        # Add enhanced text information
+        put_text_with_background(frame, f"EAR: {ear:.3f}", (10, 30), color=(0, 255, 255))
+        put_text_with_background(frame, f"YAWN: {yawn_distance:.2f}", (10, 65), color=(0, 255, 255))
+
+        # Enhanced status text
+        status_color = (0, 0, 255) if status in ['Drowsiness detected', 'Yawning detected'] else (0, 255, 0)
+        put_text_with_background(frame, status, (10, 100), font_scale=0.8, color=status_color, thickness=2)
+
+        # Add warning indicators for dangerous states
+        if status == 'Drowsiness detected':
+            # Draw warning border
+            h, w = frame.shape[:2]
+            cv2.rectangle(frame, (0, 0), (w-1, h-1), (0, 0, 255), 8)
+            # Add flashing effect text
+            put_text_with_background(frame, "WAKE UP!", (w//2 - 80, h//2), 
+                                   font_scale=1.2, color=(0, 0, 255), thickness=3)
+        elif status == 'Yawning detected':
+            # Draw orange warning border
+            h, w = frame.shape[:2]
+            cv2.rectangle(frame, (0, 0), (w-1, h-1), (0, 165, 255), 8)
+            # Add warning text
+            put_text_with_background(frame, "YAWNING!", (w//2 - 80, h//2), 
+                                   font_scale=1.2, color=(0, 165, 255), thickness=3)
 
         return frame
     except Exception as e:
